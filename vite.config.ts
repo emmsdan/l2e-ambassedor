@@ -4,6 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import path from "node:path";
+import { nitro } from 'nitro/vite';
 
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   const isSandbox =
@@ -14,14 +15,10 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   const plugins: PluginOption[] = [
     tailwindcss(),
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
-    tanstackStart({
-      server: { entry: "server" },
-      importProtection: {
-        behavior: "error",
-        client: { files: ["**/server/**"], specifiers: ["server-only"] },
-      },
-    }),
+    tanstackStart(),
+    nitro(),
     viteReact(),
+
   ];
 
   if (command === "build") {
