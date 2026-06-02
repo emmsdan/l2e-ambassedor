@@ -1,10 +1,15 @@
-import { defineConfig, loadEnv, type PluginOption, type UserConfig } from "vite";
+import {
+  defineConfig,
+  loadEnv,
+  type PluginOption,
+  type UserConfig,
+} from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import path from "node:path";
-import { nitro } from 'nitro/vite';
+import { nitro } from "nitro/vite";
 
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   const isSandbox =
@@ -18,7 +23,6 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
     tanstackStart(),
     nitro(),
     viteReact(),
-
   ];
 
   if (command === "build") {
