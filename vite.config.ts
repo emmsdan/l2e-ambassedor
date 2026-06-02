@@ -12,11 +12,6 @@ import path from "node:path";
 import { nitro } from "nitro/vite";
 
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
-  const isSandbox =
-    !!process.env.LOVABLE_SANDBOX ||
-    !!process.env.CODESPACES ||
-    !!process.env.GITPOD_WORKSPACE_ID;
-
   const plugins: PluginOption[] = [
     tailwindcss(),
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
@@ -24,37 +19,6 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
     nitro(),
     viteReact(),
   ];
-
-  if (command === "build") {
-    try {
-      const { nitro } = await import("nitro/vite");
-      plugins.push(
-        nitro({
-          preset: "cloudflare-module",
-          ...(isSandbox && {
-            output: {
-              dir: "dist",
-              serverDir: "dist/server",
-              publicDir: "dist/client",
-            },
-            cloudflare: { nodeCompat: true, deployConfig: true },
-          }),
-        }),
-      );
-    } catch {
-      // nitro optional
-    }
-  }
-
-  if (command === "serve" && mode === "development") {
-    try {
-      // @ts-expect-error - app-tagger has no published types
-      const { componentTagger } = await import("app-tagger");
-      plugins.push(componentTagger());
-    } catch {
-      // tagger optional
-    }
-  }
 
   const loadedEnv = loadEnv(mode, process.cwd(), "VITE_");
   const define: Record<string, string> = {};
@@ -79,7 +43,6 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
     server: {
       host: "::",
       port: 8080,
-      ...(isSandbox && { strictPort: true }),
     },
     plugins,
   };
